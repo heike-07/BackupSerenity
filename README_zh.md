@@ -1,20 +1,28 @@
 # Backup-tools
 
-## 程序说明
+## Ⅰ. 程序说明
 一个更高效、更方便的MySQL数据库备份工具
 
-## 开发任务
+## Ⅱ. 开发任务
 1. _`OK`_ - 思路建设 
+2. _`ING..`_ - 编写readme-doc文档
 
-## 底层环境构建
+## Ⅲ. 底层环境构建
 ### 1. 操作系统适用
 适用于Centos7、Redhat7 操作系统，其他系统适配中……
 ### 2. mysql或mariadb数据库
-需要能访问到本机的数据库端口以及IP即可，例如127.0.0.1，3306
+
+--（因为本机为实验环境没有MySQL则需要安装）
+
+####  2/0 查询相关服务是否安装
 
 ```shell
-# 参考安装
---（因为本机为实验环境没有MySQL则需要安装）
+[root@localhost mysql]# rpm -qa | grep mariadb
+[root@localhost mysql]# rpm -qa | grep mysql
+```
+
+#### 2/1 下载MysqlRPM包
+```shell
 ## 1:下载MysqlRPM包
 [root@localhost soft]# wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.42-1.el7.x86_64.rpm-bundle.tar
 [root@localhost soft]# mkdir ./mysql_5.7.42
@@ -30,6 +38,10 @@ mysql-community-libs-compat-5.7.42-1.el7.x86_64.rpm
 mysql-community-server-5.7.42-1.el7.x86_64.rpm
 mysql-community-test-5.7.42-1.el7.x86_64.rpm
 [root@localhost soft]# cd ./mysql_5.7.42/
+```
+#### 2/2 检查mariadb依赖
+
+```shell
 ## 2:检查mariadb依赖 
 --（默认安装的系统都有）
 [root@localhost mysql_5.7.42]# rpm -qa | grep mariadb
@@ -37,6 +49,9 @@ mariadb-libs-5.5.68-1.el7.x86_64
 [root@localhost mysql_5.7.42]# rpm -e --nodeps mariadb-libs-5.5.68-1.el7.x86_64
 [root@localhost mysql_5.7.42]# rpm -qa | grep mariadb
 [root@localhost mysql_5.7.42]# 
+```
+#### 2/3 安装MySQL
+```shell
 ## 3:安装MySQL
 [root@localhost mysql_5.7.42]# rpm -ivh mysql-community-common-5.7.42-1.el7.x86_64.rpm 
 warning: mysql-community-common-5.7.42-1.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 3a79bd29: NOKEY
@@ -70,6 +85,9 @@ mysql-community-devel-5.7.42-1.el7.x86_64
 mysql-community-libs-5.7.42-1.el7.x86_64
 mysql-community-client-5.7.42-1.el7.x86_64
 [root@localhost mysql_5.7.42]# 
+```
+#### 2/4 自定义data存储路径
+```shell
 ## 4:自定义data存储路径
 [root@localhost mysql_5.7.42]# mkdir -p /data/mysql
 [root@localhost mysql_5.7.42]# chown -R mysql:mysql /data/mysql
@@ -115,6 +133,9 @@ socket=/data/mysql/mysql.sock
 default-character-set=utf8
 socket=/data/mysql/mysql.sock
 [root@localhost mysql_5.7.42]# 
+```
+#### 2/5 开启MySQL服务并设置密码以及权限
+```shell
 ## 5:开启MySQL服务并设置密码以及权限
 [root@localhost mysql_5.7.42]# systemctl start mysqld
 [root@localhost mysql_5.7.42]# grep 'temporary password' /var/log/mysqld.log
@@ -147,7 +168,10 @@ Query OK, 0 rows affected (0.00 sec)
 
 mysql> exit
 Bye
-[root@localhost mysql_5.7.42]# 
+[root@localhost mysql_5.7.42]#
+```
+#### 2/6 开启binlog
+```shell
 ## 6:开启binlog
 [root@localhost mysql_5.7.42]# head -n 35 /etc/my.cnf
 # For advice on how to change settings please see
@@ -239,19 +263,31 @@ public (active)
         
 [root@localhost mysql]# 
 ```
-
 ### 3. NFS环境安装
+
+#### 3/0 查询相关服务
 
 ```shell
 # 查询相关服务
 [root@localhost ~]# systemctl status nfs*
 如果没有则需要安装
-# 环境安装
+```
+#### 3/1 SELiunx 关闭
+
+```shell
 ## 1:SELiunx 关闭
 [root@localhost ~]# getsebool 
 getsebool:  SELinux is disabled
+```
+#### 3/2 安装NFS
+
+```shell
 ## 2:安装NFS
 [root@localhost ~]# yum install nfs-utils
+```
+#### 3/3 查看rpcbind监听以及服务
+
+```shell
 ## 3:查看rpcbind监听以及服务
 [root@localhost ~]# ss -tnulp | grep 111
 udp    UNCONN     0      0         *:111                   *:*                   users:(("rpcbind",pid=720,fd=6))
@@ -269,6 +305,10 @@ tcp    LISTEN     0      128    [::]:111                [::]:*                  
 Jul 06 13:26:28 localhost.localdomain systemd[1]: Starting RPC bind service...
 Jul 06 13:26:29 localhost.localdomain systemd[1]: Started RPC bind service.
 [root@localhost ~]# 
+```
+#### 3/4 防火墙开通端口
+
+```shell
 ## 4:防火墙开通端口
 [root@localhost ~]# firewall-cmd --permanent --add-service=rpc-bind
 FirewallD is not running
@@ -305,12 +345,20 @@ public (active)
   rich rules: 
         
 [root@localhost ~]# 
+```
+#### 3/5 创建路径编写可读可写权限
+
+```shell
 ## 5:创建路径编写可读可写权限
 [root@localhost ~]# mkdir /Nfs_Disk
 [root@localhost ~]# echo "/Nfs_Disk 127.0.0.1/24(rw,async)" >> /etc/exports
 [root@localhost ~]# cat /etc/exports
 /Nfs_Disk 127.0.0.1/24(rw,async)
 [root@localhost ~]# 
+```
+#### 3/6 添加NFS硬盘
+
+```shell
 ## 6:添加NFS硬盘
 --（可以做RAID硬件组保证数据高可用）
 [root@localhost ~]# blkid
@@ -351,6 +399,10 @@ tmpfs                    182M  8.0K  182M   1% /run/user/42
 tmpfs                    182M     0  182M   0% /run/user/0
 /dev/sdb                  99G   61M   94G   1% /Nfs_Disk
 [root@localhost ~]# 
+```
+#### 3/7 启动服务并进行挂载
+
+```shell
 ## 7:启动服务并进行挂载
 [root@localhost ~]# systemctl start nfs
 [root@localhost ~]# systemctl status nfs
@@ -372,7 +424,10 @@ Jul 06 14:20:02 localhost.localdomain systemd[1]: Started NFS server and service
 Export list for 127.0.0.1:
 /Nfs_Disk 127.0.0.1/24
 [root@localhost ~]# 
+```
+#### 3/8 授权
 
+```shell
 ## 8:授权
 --（也可以不授权这个和规划有关系，不授权后面的权限调整就可以不做）
 [root@localhost /]# id nfsnobody
@@ -389,6 +444,10 @@ total 24
 drwx------ 2 nfsnobody nfsnobody 16384 Jul  6 14:15 lost+found
 -rw-r--r-- 1 root      root          5 Jul  6 14:24 test_file
 drwxr-xr-x 2 root      root       4096 Jul  6 14:24 test_mulu
+```
+#### 3/9 创建NFS协议挂载
+
+```shell
 ## 9:创建NFS协议挂载
 --（因为默认权限设置为rw,async所以创建出为ROOT权限，且走文件存储权限非NFS）
 [root@localhost /]# mkdir NFS_LINK_DISK
@@ -423,6 +482,10 @@ tmpfs                    182M     0  182M   0% /run/user/0
 /dev/sdb                  99G   61M   94G   1% /Nfs_Disk
 127.0.0.1:/Nfs_Disk       99G   60M   94G   1% /NFS_LINK_DISK
 [root@localhost /]# 
+```
+#### 3/10 测试文件创建权限
+
+```shell
 ## 10:测试文件创建权限
 [root@localhost /]# cd /NFS_LINK_DISK/
 [root@localhost NFS_LINK_DISK]# ls
@@ -446,6 +509,10 @@ drwxr-xr-x 2 root      root       4096 Jul  6 14:24 test_mulu
 total 4
 -rw-r--r-- 1 nfsnobody nfsnobody 6 Jul  6 14:34 test3_file
 [root@localhost test2_mulu]# 
+```
+#### 3/11 修改权限
+
+```shell
 ## 11:修改权限
 [root@localhost test2_mulu]# vim /etc/exports
 [root@localhost test2_mulu]# cat /etc/exports
@@ -458,6 +525,9 @@ sync 写入内存同时写入硬盘 保证数据不丢失 但是会导致IO增�
 root_sqush 当NFS客户端以root管理员访问时，映射为NFS服务器的匿名用户（比较安全）
 网络根据实际情况填写
 /Nfs_Disk 为server主机对应的共享磁盘标识 为了保证数据一致性这里设置一个总的共享。
+```
+#### 3/12 重启服务使修改生效
+```shell
 ## 12:重启服务使修改生效
 [root@localhost test2_mulu]# systemctl restart nfs*
 [root@localhost test2_mulu]# systemctl status nfs*
@@ -505,8 +575,7 @@ Jul 06 14:38:55 localhost.localdomain systemd[1]: Starting NFS server and servic
 Jul 06 14:38:55 localhost.localdomain systemd[1]: Started NFS server and services.
 [root@localhost test2_mulu]# 
 ```
-
-> *-- > 进行到这里的时候MYSQLdump相关架构已经可以使用，请确保系统可以运行mysqldump测试方法执行mysqldump*
+> *-- > 进行到这里的时候MYSQLdump相关架构程序已经可以使用，请确保系统可以运行mysqldump测试方法执行mysqldump*
 
 ```shell
 [root@localhost mysql]# mysqldump
