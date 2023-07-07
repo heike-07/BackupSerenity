@@ -681,4 +681,95 @@ UNLOCK TABLES;
 
 说明：程序执行为MySQL全量备份，输出的文件为全量的结构+数据一个的SQL文件且通过Gzip进行压缩后存储，满足预期。
 ```
+### 2. Backup_Mysqldump_One
 
+> 该程序为mysqldump原生的单个数据库备份程序。
+
+#### 2/1 配置文件修改
+
+```shell
+## Default_config
+NetworkSegment=127.0.0.1
+Date=$(date +%Y%m%d-%H%M%S)
+Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
+Script_Dir=/root/IdeaProjects/Backup-tools/mysqldump
+Script_Log=Backup_Mysqldump_One.log
+Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mysqldump_Save
+
+## database_config
+MYSQL_Host=1
+MYSQL_Username=root
+MYSQL_Password='A16&b36@@'
+MYSQL_Port=3306
+MYSQL_Chara=default-character-set=utf8
+MYSQL_Database_Name=mysql
+--（单个备份数据库名称）
+MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
+```
+
+#### 2/2 程序启动
+
+```shell
+[root@localhost mysqldump]# chmod +x Backup_Mysqldump_One.sh
+[root@localhost mysqldump]# ./Backup_Mysqldump_One.sh 
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+[root@localhost mysqldump]# 
+```
+
+#### 1/3 查看结果
+
+```SHELL
+# 生成文件
+[root@localhost 127.0.0.1]# tree
+.
+├── Mysqldump_Databases_All
+│   ├── 20230707-101039-AllDatabases-backup.sql.gz
+│   ├── 20230707-101244-AllDatabases-backup.sql.gz
+│   └── 20230707-102830-AllDatabases-backup.sql.gz
+└── Mysqldump_Save
+    └── mysql
+        └── 20230707-132623-mysql-backup.sql.gz
+
+3 directories, 4 files
+[root@localhost 127.0.0.1]# 
+
+# 日志查看
+[root@localhost mysqldump]# tail Backup_Mysqldump_One.log 
+正在判断是否有对应数据库mysql,MYSQL_SAVE存储路径……
+没有发现对应MYSQL_SAVE-mysql,对应数据库,正在创建……
+正在执行备份……
+备份开始时间:20230707-132623
+备份方式:mysqldump官方单线程
+备份数据库:mysql
+备份数据库IP:127.0.0.1
+备份存储路径:/NFS_LINK_DISK/127.0.0.1/Mysqldump_Save/mysql/对应时间-数据库名称-backup.sql.gz
+备份结束时间:20230707-132623
+END 20230707-132623
+[root@localhost mysqldump]# 
+```
+
+#### 2/4 结果说明
+
+``` shell
+# 用VIM 查看文件内容 （片段）
+...
+-- Dumping data for table `db`
+--
+
+LOCK TABLES `db` WRITE;
+/*!40000 ALTER TABLE `db` DISABLE KEYS */;
+INSERT INTO `db` VALUES ('localhost','performance_schema','mysql.session','Y','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),('localhost','sys','mysql.sys','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','Y');
+/*!40000 ALTER TABLE `db` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `engine_cost`
+--
+
+DROP TABLE IF EXISTS `engine_cost`;
+...
+
+说明：程序执行为MySQL单库备份，输出的文件为全量的结构+数据一个的SQL文件且通过Gzip进行压缩后存储，满足预期。
+```
+
+### 
