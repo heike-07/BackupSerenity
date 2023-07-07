@@ -575,7 +575,7 @@ Jul 06 14:38:55 localhost.localdomain systemd[1]: Starting NFS server and servic
 Jul 06 14:38:55 localhost.localdomain systemd[1]: Started NFS server and services.
 [root@localhost test2_mulu]# 
 ```
-> *-- > 进行到这里的时候MYSQLdump相关架构程序已经可以使用，请确保系统可以运行mysqldump测试方法执行mysqldump*
+> *-- > 进行到这里的时候MYSQLdump相关架构程序已经可以使用，请确保系统可以运行mysqldump测试方法执行mysqldump*，关于程序运行请跳转到-Ⅳ程序运行mysqldump部分
 
 ```shell
 [root@localhost mysql]# mysqldump
@@ -585,3 +585,100 @@ OR     mysqldump [OPTIONS] --all-databases [OPTIONS]
 For more options, use mysqldump --help
 [root@localhost mysql]# 
 ```
+
+## Ⅳ. 程序运行
+
+### 1. Mysqldump_Databases_All
+
+> 该程序为mysqldump原生的全库数据库备份程序。
+
+#### 1/1 配置文件修改
+
+```shell
+## default_config
+--（主程序配置）
+NetworkSegment=127.0.0.1
+--（监听网卡地址配置）
+Date=$(date +%Y%m%d-%H%M%S)
+--（日期参数）
+Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
+--（获取IP参数配置）
+Script_Dir=/root/IdeaProjects/Backup-tools/mysqldump
+--（本程序绝对路径）
+Script_Log=Backup_Mysqldump_All.log
+--（程序生成日志文件名称）
+Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All
+--（备份文件生成文件路径配置）
+
+## database_config
+--（数据库程序配置）
+MYSQL_Host=127.0.0.1
+--（数据库主机地址）
+MYSQL_Username=root
+--（数据库用户名）
+MYSQL_Password='A16&b36@@'
+--（数据库密码）
+MYSQL_Port=3306
+--（数据库监听端口号）
+MYSQL_Chara=default-character-set=utf8
+--（数据库字符集）
+MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
+--（数据库与NFS关联指针）
+```
+
+#### 1/2 程序启动
+
+```shell
+[root@localhost mysqldump]# cd /root/IdeaProjects/Backup-tools/mysqldump
+[root@localhost mysqldump]# chmod +x Backup_Mysqldump_All.sh
+[root@localhost mysqldump]# ./Backup_Mysqldump_All.sh 
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+```
+
+#### 1/3 查看结果
+
+```shell
+# 文件查看
+cd /NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All
+[root@localhost Mysqldump_Databases_All]# ll
+total 576
+-rw-r--r-- 1 nfsnobody nfsnobody 195751 Jul  7 10:10 20230707-101039-AllDatabases-backup.sql.gz
+-rw-r--r-- 1 nfsnobody nfsnobody 195753 Jul  7 10:12 20230707-101244-AllDatabases-backup.sql.gz
+-rw-r--r-- 1 nfsnobody nfsnobody 195753 Jul  7 10:28 20230707-102830-AllDatabases-backup.sql.gz
+# 日志查看
+[root@localhost mysqldump]# tail Backup_Mysqldump_All.log 
+发现NFS挂载点 NFS_LINK_DISK，正在继续执行脚本……
+正在判断是否有/NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All,存储路径……
+已发现存储路径/NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All,正在继续执行……
+正在执行备份……
+备份开始时间:20230707-102830
+备份方式:全库备份-mysqldump官方单线程
+备份数据库IP:127.0.0.1
+备份存储路径:/NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All/对应时间-AllDatabases-backup.sql.gz
+备份结束时间:20230707-102830
+END 20230707-102830
+[root@localhost mysqldump]# 
+```
+
+#### 1/4 结果说明
+
+``` shell
+# 用VIM 查看文件内容 （片段）
+...
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Database privileges';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `db`
+--
+
+LOCK TABLES `db` WRITE;
+/*!40000 ALTER TABLE `db` DISABLE KEYS */;
+INSERT INTO `db` VALUES ('localhost','performance_schema','mysql.session','Y','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),('localhost','sys','mysql.sys','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','Y');
+/*!40000 ALTER TABLE `db` ENABLE KEYS */;
+UNLOCK TABLES;
+...
+
+说明：程序执行为MySQL全量备份，输出的文件为全量的结构+数据一个的SQL文件且通过Gzip进行压缩后存储，满足预期。
+```
+
