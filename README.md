@@ -590,15 +590,26 @@ For more options, use mysqldump --help
 
 ```shell
 # 说明
-项目lib文件夹中，mydumper-0.9.3-41.el7.x86_64.rpm 进行安装
-
+--（项目lib文件夹中，mydumper-0.9.3-41.el7.x86_64.rpm 进行安装）
+[root@localhost lib]# cd /root/IdeaProjects/Backup-tools/lib
+[root@localhost lib]# rpm -qa | grep mydumper
+[root@localhost lib]# rpm -ivh mydumper-0.9.3-41.el7.x86_64.rpm 
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:mydumper-0.9.3-41                ################################# [100%]
+[root@localhost lib]# rpm -qa | grep mydumper
+mydumper-0.9.3-41.x86_64
+[root@localhost lib]# mydumper
+# 测试依赖
+** (mydumper:5063): CRITICAL **: 13:58:22.089: Error connecting to database: Access denied for user 'root'@'localhost' (using password: NO)
+[root@localhost lib]# 
 ```
-
+> *-- > 进行到这里的时候MYdumper相关架构程序已经可以使用，请确保系统可以运行mydumper测试方法执行mydumper*，关于程序运行请跳转到-Ⅳ程序运行mydumper部分
 
 
 ## Ⅳ. 程序运行
 
-### 1. Mysqldump_Databases_All
+### 1. Backup_Mysqldump_All
 
 > 该程序为mysqldump原生的全库数据库备份程序。
 
@@ -782,4 +793,142 @@ DROP TABLE IF EXISTS `engine_cost`;
 说明：程序执行为MySQL单库备份，输出的文件为全量的结构+数据一个的SQL文件且通过Gzip进行压缩后存储，满足预期。
 ```
 
-### 
+### 3. Backup_Mydumper_MultiThread_Database_All
+
+> 该程序为多线程全量数据库备份程序
+
+#### 2/1 配置文件修改
+
+```shell
+## Default_config
+--（主要配置）
+NetworkSegment=127.0.0.1
+--（网络IP配置）
+Date=$(date +%Y%m%d-%H%M%S)
+--（日期格式配置）
+Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
+--（IP获取配置）
+Script_Dir=/root/IdeaProjects/Backup-tools/mydumper
+--（脚本路劲配置）
+Script_Log=Backup_Mydumper_MultiThread_Database_All.log
+--（脚本日志配置）
+Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mydumper_MultiThread_Databases_All
+--（备份生成文件存储位置配置）
+
+## Database_config
+MYSQL_Host=127.0.0.1
+--（数据库主机名）
+MYSQL_Username=root
+--（数据库账户名）
+MYSQL_Password='A16&b36@@'
+--（数据库密码）
+MYSQL_Port=3306
+--（数据库端口）
+MYSQL_Chara=default-character-set=utf8
+--（数据库字符集）
+#MYSQL_Database_Name=sakila_b
+MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
+--（数据库NFS指针）
+
+# 是否开启压缩存储  压缩.SQL.GZ 占用空间小 不压缩.SQL 占用空间大
+DUMPER_COMPERSS=-c
+--（默认开启压缩）
+# dumper信息展示级别,最详细级别
+DUMPER_INFO_LAVEL=3
+--（信息级别展示INFO）
+# 备份线程数 根据实际情况调整
+DUMPER_THREADS_NUMBER=32
+--（备份线程数，根据主机实际情况）
+# dumper信息展示存储日志位置
+DUMPER_BACKINFO_LOG=${Script_Dir}/DUMPER_Backup_info.log
+--（程序运行过程记录日志文件）
+```
+
+#### 2/2 程序启动
+
+```shell
+[root@localhost mydumper]# chmod +x Backup_Mydumper_MultiThread_Database_All.sh 
+[root@localhost mydumper]# ./Backup_Mydumper_MultiThread_Database_All.sh 
+[root@localhost mydumper]# tail DUMPER_Backup_info.log 
+** Message: 14:10:34.013: Thread 21 shutting down
+** Message: 14:10:34.017: Thread 20 shutting down
+** Message: 14:10:34.019: Thread 18 shutting down
+** Message: 14:10:34.024: Thread 5 shutting down
+** Message: 14:10:34.025: Thread 1 shutting down
+** Message: 14:10:34.032: Finished dump at: 2023-07-07 14:10:34
+```
+
+#### 1/3 查看结果
+
+```SHELL
+# 生成文件
+[root@localhost mydumper]# cd /NFS_LINK_DISK/127.0.0.1/
+[root@localhost 127.0.0.1]# tree
+.
+├── Mydumper_MultiThread_Databases_All
+│   └── 20230707-141032-Databases-All
+│       ├── metadata
+│       ├── mysql.columns_priv-schema.sql.gz
+│       ├── mysql.db-schema.sql.gz
+```
+
+#### 2/4 结果说明
+
+``` shell
+[root@localhost 20230707-141032-Databases-All]# vim mysql.proxies_priv.sql.gz
+[root@localhost 20230707-141032-Databases-All]# ll | grep proxies
+-rw-r--r-- 1 nfsnobody nfsnobody    338 Jul  7 14:10 mysql.proxies_priv-schema.sql.gz
+-rw-r--r-- 1 nfsnobody nfsnobody    187 Jul  7 14:10 mysql.proxies_priv.sql.gz
+[root@localhost 20230707-141032-Databases-All]# 
+
+# 说明
+可以看到全库多线程备份会在NFS路径下生成对应时间的文件夹并有schema结构文件，正常的数据文件，也就是会生成结构和数据分开的文件，满足预期。
+```
+
+### 4. code_name
+
+> 该程序
+
+#### 2/1 配置文件修改
+
+```shell
+
+```
+
+#### 2/2 程序启动
+
+```shell
+
+```
+
+#### 1/3 查看结果
+
+```SHELL
+
+```
+
+#### 2/4 结果说明
+
+###4. code_name
+
+> 该程序
+
+#### 2/1 配置文件修改
+
+```shell
+
+```
+
+#### 2/2 程序启动
+
+```shell
+
+```
+
+#### 1/3 查看结果
+
+```SHELL
+
+```
+
+#### 2/4 结果说明
