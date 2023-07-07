@@ -586,6 +586,16 @@ For more options, use mysqldump --help
 [root@localhost mysql]# 
 ```
 
+### 4. Mydumper 依赖安装
+
+```shell
+# 说明
+项目lib文件夹中，mydumper-0.9.3-41.el7.x86_64.rpm 进行安装
+
+```
+
+
+
 ## Ⅳ. 程序运行
 
 ### 1. Mysqldump_Databases_All
