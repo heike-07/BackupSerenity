@@ -13,20 +13,20 @@
 #source ~/.bash_profile
 
 ## Default_config
-NetworkSegment=192.168.7
+NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
 Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/opt/script/Mydumper_MultiThread_One
+Script_Dir=/root/IdeaProjects/Backup-tools/mydumper
 Script_Log=Backup_Mydumper_MultiThread_Database_One.log
-Data_Storage_Save=/NFS_LINK_DISK/192.168.7.136/Mydumper_MultiThread_Save
+Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mydumper_MultiThread_Save
 
 ## Database_config
-MYSQL_Host=192.168.7.136
+MYSQL_Host=127.0.0.1
 MYSQL_Username=root
 MYSQL_Password='A16&b36@@'
 MYSQL_Port=3306
 MYSQL_Chara=default-character-set=utf8
-MYSQL_Database_Name=sakila_b
+MYSQL_Database_Name=mysql
 MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
 
 # 是否开启压缩存储  压缩.SQL.GZ 占用空间小 不压缩.SQL 占用空间大
@@ -92,7 +92,7 @@ Backup_One(){
     echo "备份数据库IP:$MYSQL_Host"
     echo "备份存储路径:$Data_Storage_Save/$MYSQL_Database_Name/对应时间-数据库名称/XXX(...).sql.gz"
     #/usr/bin/mysqldump -u ${MYSQL_Username} -P ${MYSQL_Port} -p${MYSQL_Password} -h ${MYSQL_Host} --${MYSQL_Chara} ${MYSQL_Database_Name} | /usr/bin/gzip > $Data_Storage_Save/$MYSQL_Database_Name/$Date-$MYSQL_Database_Name-backup.sql.gz
-    /usr/bin/nohup /usr/local/bin/mydumper -u ${MYSQL_Username} -p ${MYSQL_Password} -P ${MYSQL_Port} -h ${MYSQL_Host} -B ${MYSQL_Database_Name} ${DUMPER_COMPERSS} -v ${DUMPER_INFO_LAVEL} --threads ${DUMPER_THREADS_NUMBER} -o ${Data_Storage_Save}/${MYSQL_Database_Name}/$Date-${MYSQL_Database_Name} >> ${DUMPER_BACKINFO_LOG} 2>&1 &
+    /usr/bin/nohup /usr/bin/mydumper -u ${MYSQL_Username} -p ${MYSQL_Password} -P ${MYSQL_Port} -h ${MYSQL_Host} -B ${MYSQL_Database_Name} ${DUMPER_COMPERSS} -v ${DUMPER_INFO_LAVEL} --threads ${DUMPER_THREADS_NUMBER} -o ${Data_Storage_Save}/${MYSQL_Database_Name}/$Date-${MYSQL_Database_Name} >> ${DUMPER_BACKINFO_LOG} 2>&1 &
    echo "备份结束时间:$Date"
 }
 
