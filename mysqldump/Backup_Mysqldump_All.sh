@@ -10,16 +10,17 @@
 # Config
 #source /etc/profile
 #source ~/.bash_profile
-## default_config
 
-NetworkSegment=192.168.7
+## Default_config
+NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
 Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/opt/script/Backup/Mysqldump_All
+Script_Dir=/root/IdeaProjects/Backup-tools/mysqldump
 Script_Log=Backup_Mysqldump_All.log
-Data_Storage_Save=/NFS_LINK_DISK/192.168.7.136/Mysqldump_Databases_All
-## database_config
-MYSQL_Host=192.168.7.136
+Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All
+
+## Database_config
+MYSQL_Host=127.0.0.1
 MYSQL_Username=root
 MYSQL_Password='A16&b36@@'
 MYSQL_Port=3306
