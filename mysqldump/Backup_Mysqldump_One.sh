@@ -1,6 +1,7 @@
 #!/bin/bash
 # Title:: Backup_Mysqldump_One
-# Author:: ZKY.Dong
+# Author:: heike-07
+# Description:: https://github.com/heike-07/Backup-tools.git
 # Time:: 2022-04-18
 # Update:: -
 
@@ -10,21 +11,22 @@
 # Config
 #source /etc/profile
 #source ~/.bash_profile
-## default_config
 
-NetworkSegment=192.168.7
+## Default_config
+NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
 Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/opt/script/Backup/Mysqldump_One
+Script_Dir=/root/IdeaProjects/Backup-tools/mysqldump
 Script_Log=Backup_Mysqldump_One.log
-Data_Storage_Save=/NFS_LINK_DISK/192.168.7.136/Mysqldump_Save
-## database_config
-MYSQL_Host=192.168.7.136
+Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mysqldump_Save
+
+## Database_config
+MYSQL_Host=127.0.0.1
 MYSQL_Username=root
 MYSQL_Password='A16&b36@@'
 MYSQL_Port=3306
 MYSQL_Chara=default-character-set=utf8
-MYSQL_Database_Name=Yearning
+MYSQL_Database_Name=mysql
 MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
 
 If_NFS(){
