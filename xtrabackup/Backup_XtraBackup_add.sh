@@ -14,13 +14,13 @@
 #source ~/.bash_profile
 
 ## Default_config
-NetworkSegment=192.168.7
+NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
 Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/opt/script/Backup/XtraBack_add
+Script_Dir=/root/IdeaProjects/Backup-tools/xtrabackup
 Script_Log=Backup_XtraBackup_Add.log
-Data_Storage_Full=/NFS_LINK_DISK/192.168.7.136/XtraBackup/Full
-Data_Storage_Add=/NFS_LINK_DISK/192.168.7.136/XtraBackup/Add
+Data_Storage_Full=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Full
+Data_Storage_Add=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Add
 
 ## Database_config
 MYSQL_Username=root
