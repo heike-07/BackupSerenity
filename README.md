@@ -180,11 +180,9 @@ max_connections=500
 init_connect='SET NAMES utf8'
 
 [client]
-default-character-set=utf8
 socket=/data/mysql/mysql.sock
 
 [mysql]
-default-character-set=utf8
 socket=/data/mysql/mysql.sock
 [root@localhost mysql_5.7.42]# 
 ```
@@ -660,6 +658,48 @@ mydumper-0.9.3-41.x86_64
 ```
 > *-- > 进行到这里的时候MYdumper相关架构程序已经可以使用，请确保系统可以运行mydumper测试方法执行mydumper*，关于程序运行请跳转到-Ⅳ程序运行mydumper部分
 
+### 5.xtrabackup 依赖安装
+
+```shell
+# 安装依赖
+[root@localhost ~]# cd /root/IdeaProjects/Backup-tools/lib/
+[root@localhost lib]# 
+[root@localhost lib]# whereis innobackupex
+innobackupex:[root@localhost lib]# innobackupex
+bash: innobackupex: command not found...
+[root@localhost lib]# 
+[root@localhost lib]# rpm -ivh  percona-xtrabackup-*
+warning: percona-xtrabackup-24-2.4.26-1.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 8507efa5: NOKEY
+error: Failed dependencies:
+        libev.so.4()(64bit) is needed by percona-xtrabackup-24-2.4.26-1.el7.x86_64
+        perl(DBD::mysql) is needed by percona-xtrabackup-24-2.4.26-1.el7.x86_64
+        perl(Digest::MD5) is needed by percona-xtrabackup-24-2.4.26-1.el7.x86_64
+# 解决依赖冲突
+[root@localhost lib]# cd /opt/soft/mysql_5.7.42
+[root@localhost mysql_5.7.42]# rpm -ivh mysql-community-libs-compat-5.7.42-1.el7.x86_64.rpm
+[root@localhost mysql_5.7.42]# yum install perl-DBD-MySQL
+[root@localhost lib]# rpm -ivh percona-xtrabackup-*
+warning: percona-xtrabackup-24-2.4.26-1.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 8507efa5: NOKEY
+error: Failed dependencies:
+        perl(Digest::MD5) is needed by percona-xtrabackup-24-2.4.26-1.el7.x86_64
+[root@localhost lib]# 
+[root@localhost lib]# yum install perl-Digest-MD5
+# 安装成功，依赖解决每个系统不一样根据实际环境处理，最终RPM包安装成功即可。
+[root@localhost lib]# rpm -ivh percona-xtrabackup-*
+warning: percona-xtrabackup-24-2.4.26-1.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 8507efa5: NOKEY
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:percona-xtrabackup-24-2.4.26-1.el################################# [ 33%]
+   2:percona-xtrabackup-test-24-2.4.26################################# [ 67%]
+   3:percona-xtrabackup-24-debuginfo-2################################# [100%]
+[root@localhost lib]# 
+# 测试
+[root@localhost lib]# innobackupex
+xtrabackup: recognized server arguments: --datadir=/data/mysql --log_bin=mysql-bin --server-id=1 
+230710 13:30:24 innobackupex: Missing argument
+[root@localhost lib]# 
+```
+> -- > 进行到这里的时候xtrabackup相关架构程序已经可以使用，请确保系统可以运行xtrabackup测试方法执行innobackupex，关于程序运行请跳转到-Ⅳ程序运行xtrabackup部分
 
 ## Ⅳ. 程序运行
 
@@ -984,30 +1024,310 @@ total 384
 可以看到 此文件下只有mysql数据库得内容，包含结构和数据，其他数据库 grep -v mysql发现只有有个配置文件所以满足预期。
 ```
 
-### 5. code_name
+### 5. Backup_XtraBackup_add
 
-> 该程序
+> 该程序为XtraBackup增量备份程序，用于提供MySQL数据库的全量+增量备份程序
 
 #### 5/1 配置文件修改
 
 ```shell
+## Default_config
+NetworkSegment=127.0.0.1
+--（网络配置）
+Date=$(date +%Y%m%d-%H%M%S)
+--（日期设置）
+Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
+--（网络配置参数）
+Script_Dir=/root/IdeaProjects/Backup-tools/xtrabackup
+--（脚本位置）
+Script_Log=Backup_XtraBackup_Add.log
+--（日志文件配置）
+Data_Storage_Full=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Full
+--（全量备份存储位置）
+Data_Storage_Add=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Add
+--（增量备份存储位置）
 
+## Database_config
+MYSQL_Username=root
+--（数据库账户）
+MYSQL_Password='A16&b36@@'
+--（数据库密码）
+MYSQL_Default=/etc/my.cnf
+--（配置文件位置，需要判断binlog相关函数内容使用）
+MYSQL_Port=3306
+--（数据库端口）
+MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
+--（NFS关联指针）
 ```
 
 #### 5/2 程序启动
 
 ```shell
+[root@localhost xtrabackup]# chmod +x Backup_XtraBackup_add.sh 
+[root@localhost xtrabackup]# ll
+total 8
+-rwxr-xr-x 1 root root 4396 Jul 10 13:37 Backup_XtraBackup_add.sh
+[root@localhost xtrabackup]# 
+# 首次执行全量备份
+[root@localhost xtrabackup]# ./Backup_XtraBackup_add.sh 
+...
+xtrabackup: The latest check point (for incremental): '2767189'
+xtrabackup: Stopping log copying thread.
+.230710 13:42:59 >> log scanned up to (2767198)
 
+230710 13:42:59 Executing UNLOCK TABLES
+230710 13:42:59 All tables unlocked
+230710 13:42:59 [00] Copying ib_buffer_pool to /NFS_LINK_DISK/127.0.0.1/XtraBackup/Full/ib_buffer_pool
+230710 13:42:59 [00]        ...done
+230710 13:42:59 Backup created in directory '/NFS_LINK_DISK/127.0.0.1/XtraBackup/Full/'
+MySQL binlog position: filename 'mysql-bin.000004', position '154'
+230710 13:42:59 [00] Writing /NFS_LINK_DISK/127.0.0.1/XtraBackup/Full/backup-my.cnf
+230710 13:42:59 [00]        ...done
+230710 13:42:59 [00] Writing /NFS_LINK_DISK/127.0.0.1/XtraBackup/Full/xtrabackup_info
+230710 13:42:59 [00]        ...done
+xtrabackup: Transaction log of lsn (2767189) to (2767198) was copied.
+230710 13:43:00 completed OK!
+...
+[root@localhost xtrabackup]# tail Backup_XtraBackup_Add.log 
+START 20230710-134256
+正在进行MySQL-binlog判断……
+已发现mysqlbinlog相关配置，正在继续执行脚本……
+发现NFS挂载点 NFS_LINK_DISK，正在继续执行脚本……
+正在判断是否有FULL指针，请稍后……
+没有找到全量备份FULL的指针，正在执行全量备份FULL
+END 20230710-134256
+```
+
+#### 0/0 制作增量数据
+
+```shell
+# 读数据库进行查询、创建数据库、创建表、插入数据、查询操作
+[root@localhost xtrabackup]# mysql -uroot -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 4
+Server version: 5.7.42-log MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.01 sec)
+
+mysql> CREATE DATABASE menagerie;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+ERROR 1046 (3D000): No database selected
+mysql> use  menagerie;
+Database changed
+mysql> CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> SHOW TABLES;
++---------------------+
+| Tables_in_menagerie |
++---------------------+
+| pet                 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> DESCRIBE pet;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| name    | varchar(20) | YES  |     | NULL    |       |
+| owner   | varchar(20) | YES  |     | NULL    |       |
+| species | varchar(20) | YES  |     | NULL    |       |
+| sex     | char(1)     | YES  |     | NULL    |       |
+| birth   | date        | YES  |     | NULL    |       |
+| death   | date        | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+mysql> INSERT INTO pet VALUES ('Puffball','Diane','hamster','f','1999-03-30',NULL);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from pet where name = 'Puffball';
++----------+-------+---------+------+------------+-------+
+| name     | owner | species | sex  | birth      | death |
++----------+-------+---------+------+------------+-------+
+| Puffball | Diane | hamster | f    | 1999-03-30 | NULL  |
++----------+-------+---------+------+------------+-------+
+1 row in set (0.00 sec)
+
+mysql> exit
+Bye
+# 查看binlog 是否记录 （片段）
+[root@localhost mysql]# mysqlbinlog  -vv mysql-bin.000004
+——> 可以看到创建数据库
+CREATE DATABASE menagerie
+/*!*/;
+# at 328
+#230710 13:53:24 server id 1  end_log_pos 393 CRC32 0x61986ec2  Anonymous_GTID  last_committed=1        sequence_number=2       rbr_only=no
+SET @@SESSION.GTID_NEXT= 'ANONYMOUS'/*!*/;
+# at 393
+#230710 13:53:24 server id 1  end_log_pos 588 CRC32 0x9179e5d5  Query   thread_id=4     exec_time=0     error_code=0
+use `menagerie`/*!*/;
+SET TIMESTAMP=1688968404/*!*/;
+CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),species VARCHAR(20), sex CHAR(1), birth DATE, death DATE)
+/*!*/;
+——> 可以看到创建表并插入了数据
+### INSERT INTO `menagerie`.`pet`
+### SET
+###   @1='Puffball' /* VARSTRING(20) meta=20 nullable=1 is_null=0 */
+###   @2='Diane' /* VARSTRING(20) meta=20 nullable=1 is_null=0 */
+###   @3='hamster' /* VARSTRING(20) meta=20 nullable=1 is_null=0 */
+###   @4='f' /* STRING(1) meta=65025 nullable=1 is_null=0 */
+###   @5='1999:03:30' /* DATE meta=0 nullable=1 is_null=0 */
+###   @6=NULL /* DATE meta=0 nullable=1 is_null=1 */
+# at 858
+#230710 13:54:08 server id 1  end_log_pos 889 CRC32 0xcd0a44dd  Xid = 33
+COMMIT/*!*/;
+# at 889
+#230710 14:02:55 server id 1  end_log_pos 912 CRC32 0x30331055  Stop
+SET @@SESSION.GTID_NEXT= 'AUTOMATIC' /* added by mysqlbinlog */ /*!*/;
+DELIMITER ;
+
+```
+
+#### 0/0 程序启动第N次
+
+```shell
+# 执行第二次启动并触发增量函数
+[root@localhost xtrabackup]# ./Backup_XtraBackup_add.sh 
+...
+xtrabackup: The latest check point (for incremental): '2772290'
+xtrabackup: Stopping log copying thread.
+.230710 14:21:41 >> log scanned up to (2772299)
+
+230710 14:21:41 Executing UNLOCK TABLES
+230710 14:21:41 All tables unlocked
+230710 14:21:41 [00] Copying ib_buffer_pool to /NFS_LINK_DISK/127.0.0.1/XtraBackup/Add/2023-07-10_14-21-37/ib_buffer_pool
+230710 14:21:41 [00]        ...done
+230710 14:21:41 Backup created in directory '/NFS_LINK_DISK/127.0.0.1/XtraBackup/Add/2023-07-10_14-21-37/'
+MySQL binlog position: filename 'mysql-bin.000007', position '154'
+230710 14:21:41 [00] Writing /NFS_LINK_DISK/127.0.0.1/XtraBackup/Add/2023-07-10_14-21-37/backup-my.cnf
+230710 14:21:41 [00]        ...done
+230710 14:21:41 [00] Writing /NFS_LINK_DISK/127.0.0.1/XtraBackup/Add/2023-07-10_14-21-37/xtrabackup_info
+230710 14:21:41 [00]        ...done
+xtrabackup: Transaction log of lsn (2772290) to (2772299) was copied.
+230710 14:21:42 completed OK!
+...
+[root@localhost xtrabackup]# tail Backup_XtraBackup_Add.log 
+END 20230710-134256
+START 20230710-142137
+正在进行MySQL-binlog判断……
+已发现mysqlbinlog相关配置，正在继续执行脚本……
+发现NFS挂载点 NFS_LINK_DISK，正在继续执行脚本……
+正在判断是否有FULL指针，请稍后……
+已经找到全量备份FULL的指针，正在执行增量判断，请稍后……
+正在判断是否有增量ADD的指针，请稍后……
+首次增量备份已完成
+END 20230710-142137
+[root@localhost xtrabackup]# 
 ```
 
 #### 5/3 查看结果
 
 ```SHELL
+# 首次执行全量备份查看文件
+[root@localhost 127.0.0.1]# tree -L 2 XtraBackup/
+XtraBackup/
+└── Full
+    ├── backup-my.cnf
+    ├── ib_buffer_pool
+    ├── ibdata1
+    ├── mysql
+    ├── performance_schema
+    ├── sys
+    ├── xtrabackup_binlog_info
+    ├── xtrabackup_checkpoints
+    ├── xtrabackup_info
+    └── xtrabackup_logfile
+
+4 directories, 7 files
+[root@localhost 127.0.0.1]# pwd
+/NFS_LINK_DISK/127.0.0.1
+[root@localhost 127.0.0.1]# 
+# 第二次执行增量备份查看文件
+[root@localhost XtraBackup]# tree -L 2 .
+.
+├── Add
+│   └── 2023-07-10_14-21-37
+└── Full
+    ├── backup-my.cnf
+    ├── ib_buffer_pool
+    ├── ibdata1
+    ├── mysql
+    ├── performance_schema
+    ├── sys
+    ├── xtrabackup_binlog_info
+    ├── xtrabackup_checkpoints
+    ├── xtrabackup_info
+    └── xtrabackup_logfile
+
+6 directories, 7 files
+[root@localhost XtraBackup]# pwd
+/NFS_LINK_DISK/127.0.0.1/XtraBackup
+[root@localhost XtraBackup]# 
+[root@localhost Add]# du -h .
+1.1M    ./2023-07-10_14-21-37/performance_schema
+1.2M    ./2023-07-10_14-21-37/mysql
+104K    ./2023-07-10_14-21-37/menagerie
+604K    ./2023-07-10_14-21-37/sys
+3.4M    ./2023-07-10_14-21-37
+3.4M    .
+[root@localhost Add]# cd ..
+[root@localhost XtraBackup]# ls
+Add  Full
+[root@localhost XtraBackup]# cd Full/
+[root@localhost Full]# ls
+backup-my.cnf  ib_buffer_pool  ibdata1  mysql  performance_schema  sys  xtrabackup_binlog_info  xtrabackup_checkpoints  xtrabackup_info  xtrabackup_logfile
+[root@localhost Full]# du -h .
+1.1M    ./performance_schema
+12M     ./mysql
+680K    ./sys
+26M     .
+[root@localhost Full]# 
 
 ```
 
 #### 5/4 结果说明
 
 ```shell
-
+[root@localhost Add]# du -h .
+1.1M    ./2023-07-10_14-21-37/performance_schema
+1.2M    ./2023-07-10_14-21-37/mysql
+104K    ./2023-07-10_14-21-37/menagerie
+604K    ./2023-07-10_14-21-37/sys
+3.4M    ./2023-07-10_14-21-37
+3.4M    .
+[root@localhost Add]# cd ..
+[root@localhost XtraBackup]# ls
+Add  Full
+[root@localhost XtraBackup]# cd Full/
+[root@localhost Full]# ls
+backup-my.cnf  ib_buffer_pool  ibdata1  mysql  performance_schema  sys  xtrabackup_binlog_info  xtrabackup_checkpoints  xtrabackup_info  xtrabackup_logfile
+[root@localhost Full]# du -h .
+1.1M    ./performance_schema
+12M     ./mysql
+680K    ./sys
+26M     .
+[root@localhost Full]# 
+# 说明
+可以看到 第一次程序执行获取了全量的mysql数据文件，存储在nfs的full位置上，第二次程序执行前进行了数据库操作，且重启了2次mysql，所以生成了2个全新的binlog文件，查询之前的binlog看到了相关的创建数据库、创建数据表相关操作，然后进行第二次程序执行，文件存储在nfs的add位置上，可以看到大小完全不一致，也就是说只存储了增量的数据，满足预期。
 ```
