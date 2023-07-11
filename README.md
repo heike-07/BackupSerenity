@@ -56,6 +56,9 @@
       - [5/4 程序启动第N次](#54-程序启动第n次)
       - [5/5 查看结果](#55-查看结果)
       - [5/6 结果说明](#56-结果说明)
+  - [Ⅴ. 开发](#ⅴ-开发)
+    - [1. 构建开发环境](#1-构建开发环境)
+    - [2. 程序编译](#2-程序编译)
 
 ## Ⅰ. 程序说明
 一个更高效、更方便的MySQL数据库备份工具
@@ -66,8 +69,10 @@
 3. _`OK.`_ - 核心代码开发Mysqldump备份架构
 4. _`OK.`_ - 核心代码开发Mydumper备份架构
 5. _`OK.`_ - 核心代码开发Xtrabackup备份架构
-6. _`ING..`_ - 使用GO封装
-7. _`ING..`_ - 主程序和配置文件分离
+6. _`OK.`_ - 使用GO封装
+7. _`OK.`_ - 主程序和配置文件分离
+8. _`OK.`_ - 合并主分支发布Releases
+9. _`ING.`_ - 文档细化
 
 ## Ⅲ. 底层环境构建
 ### 1. 操作系统适用
@@ -1338,4 +1343,76 @@ backup-my.cnf  ib_buffer_pool  ibdata1  mysql  performance_schema  sys  xtraback
 [root@localhost Full]# 
 # 说明
 可以看到 第一次程序执行获取了全量的mysql数据文件，存储在nfs的full位置上，第二次程序执行前进行了数据库操作，且重启了2次mysql，所以生成了2个全新的binlog文件，查询之前的binlog看到了相关的创建数据库、创建数据表相关操作，然后进行第二次程序执行，文件存储在nfs的add位置上，可以看到大小完全不一致，也就是说只存储了增量的数据，满足预期。
+```
+
+## Ⅴ. 开发
+
+### 1. 构建开发环境
+
+```shell
+# GO环境搭建
+[root@localhost soft]# wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+[root@localhost soft]# tar xzvf go1.20.5.linux-amd64.tar.gz -C /usr/local/
+[root@localhost go]# cd /usr/local/go/
+[root@localhost go]# ll bin/go
+-rwxr-xr-x 1 root root 15657886 Jun  2 01:04 bin/go
+[root@localhost go]# bin/go version
+go version go1.20.5 linux/amd64
+[root@localhost go]# 
+# 环境变量设置
+[root@localhost go]# vim /etc/profile.d/go.sh
+[root@localhost go]# cat /etc/profile.d/go.sh 
+export GOROOT=/usr/local/go
+export GOPATH=/root/go
+export PATH=$PATH:$GOROOT/bin
+[root@localhost go]# source /etc/profile
+# 测试环境生效查看版本
+[root@localhost go]# go version
+go version go1.20.5 linux/amd64
+[root@localhost go]# mkdir -p /root/go
+[root@localhost go]# cd /root/go
+[root@localhost go]# 
+# 编译第一个程序
+[root@localhost go]# vim hell.go
+[root@localhost go]# cat hell.go 
+package main
+import "fmt"
+
+func main(){
+        fmt.Printf("Hello World")
+}
+[root@localhost go]# 
+[root@localhost go]# go run hell.go 
+Hello World[root@localhost go]# ls
+hell.go  pkg
+# 移动go程序
+[root@localhost obj]# mv ~/go/hell.go .
+[root@localhost obj]# ls
+hell.go
+# 初始化项目
+[root@localhost obj]# go mod init example.com/hello
+go: creating new go.mod: module example.com/hello
+go: to add module requirements and sums:
+        go mod tidy
+[root@localhost obj]# ls
+go.mod  hell.go
+# 编译程序
+[root@localhost obj]# go build hell.go 
+[root@localhost obj]# ls
+go.mod  hell  hell.go
+[root@localhost obj]# ./hell 
+Hello World[root@localhost obj]# 
+--（至此环境测试成功）
+```
+
+### 2. 程序编译
+```SHELL
+  993  go mod init github.com/heike-07/Backup-tools
+  994  go build
+  995  go build Backup_Mydumper_MultiThread_Database_All.go
+  996  go build Backup_Mydumper_MultiThread_Database_One.go
+  997  go build Backup_Mysqldump_All.go
+  998  go build Backup_Mysqldump_One.go
+  999  go build Backup_XtraBackup_add.go
+
 ```
