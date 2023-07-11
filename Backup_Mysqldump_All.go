@@ -2,37 +2,27 @@ package main
 
 import (
 	"fmt"
-	_ "fmt"
-	_ "os"
 	"os/exec"
-	_ "os/exec"
 )
 
 func main() {
 	script := `
-    #!/bin/bash
-    echo "hello,GO!"
+#!/bin/bash
+# Type:: [bin]
+# Title:: Backup_Mysqldump_All
+# Author:: heike-07
+# Description:: https://github.com/heike-07/Backup-tools.git
+# Time:: 2023-07-10
+# Update:: -
+# Principle
 # DATABASE(ALL) -> Mysqldump -> SQL -> SQL.gz
 
 # Config
 #source /etc/profile
 #source ~/.bash_profile
 
-## Default_config
-NetworkSegment=127.0.0.1
-Date=$(date +%Y%m%d-%H%M%S)
-Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/root/IdeaProjects/Backup-tools/main
-Script_Log=Backup_Mysqldump_All.log
-Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mysqldump_Databases_All
-
-## Database_config
-MYSQL_Host=127.0.0.1
-MYSQL_Username=root
-MYSQL_Password='A16&b36@@'
-MYSQL_Port=3306
-MYSQL_Chara=default-character-set=utf8
-MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
+# call Backup_Mysqldump_All.conf
+source conf/Backup_Mysqldump_All.conf
 
 If_NFS(){
     # Principle
