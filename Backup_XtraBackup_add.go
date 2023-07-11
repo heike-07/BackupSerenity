@@ -1,3 +1,12 @@
+package main
+
+import (
+	"fmt"
+	"os/exec"
+)
+
+func main() {
+	script := `
 #!/bin/bash
 # Title:: Backup_XtraBackup_Add
 # Author:: heike-07
@@ -9,25 +18,8 @@
 # ALL -> ADD1 -> ADD2 ...
 # ADD ? 1:BASE ALL -> ADD1 2:BASE ADD1 -> ADD2
 
-# Config
-#source /etc/profile
-#source ~/.bash_profile
-
-## Default_config
-NetworkSegment=127.0.0.1
-Date=$(date +%Y%m%d-%H%M%S)
-Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/root/IdeaProjects/Backup-tools/xtrabackup
-Script_Log=Backup_XtraBackup_Add.log
-Data_Storage_Full=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Full
-Data_Storage_Add=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Add
-
-## Database_config
-MYSQL_Username=root
-MYSQL_Password='A16&b36@@'
-MYSQL_Default=/etc/my.cnf
-MYSQL_Port=3306
-MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
+# Call Backup_XtraBackup_add.conf
+source conf/Backup_XtraBackup_add.conf
 
 # Function
 XtraBackup_Full(){
@@ -122,3 +114,13 @@ cd $Script_Dir
 echo START $Date >> $Script_Log
 Mysql_binlog_If >> $Script_Log
 echo END $Date >> $Script_Log
+
+`
+	cmd := exec.Command("sh", "-c", script)
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Print("error...", err)
+		return
+	}
+	fmt.Print(string(output))
+}
