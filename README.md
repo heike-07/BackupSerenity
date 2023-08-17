@@ -78,7 +78,7 @@ Gitee(码云)：https://gitee.com/heike07code/Backup-tools
 
 B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?sid=1636805
 
-![image-20230817143936892](README.assets/image-20230817143936892.png)
+![image-20230817145834992](README.assets/image-20230817145834992.png)
 
 欢迎大家star ⭐ 谢谢！ thanks~
 
