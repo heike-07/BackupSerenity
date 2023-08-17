@@ -1,5 +1,8 @@
-# Backup-tools
-- [Backup-tools](#backup-tools)
+# BackupSerenity
+
+![image-20230817143005605](README.assets/image-20230817143005605.png)
+
+- [BackupSerenity](#BackupSerenity)
   - [Ⅰ. 程序说明](#ⅰ-程序说明)
   - [Ⅱ. 开发任务](#ⅱ-开发任务)
   - [Ⅲ. 底层环境构建](#ⅲ-底层环境构建)
@@ -61,7 +64,25 @@
     - [2. 程序编译](#2-程序编译)
 
 ## Ⅰ. 程序说明
-一个更高效、更方便的MySQL数据库备份工具
+**开源软件 BackupSerenity MySQL 数据库备份工具** 
+
+核心原理：通过 go 封装的一套基于 MySQL 备份的思路工具……
+
+作者： heike07 
+
+开源中国收录软件链接：https://www.oschina.net/p/backupserenity 
+
+Github：https://github.com/heike-07/Backup-tools 
+
+Gitee(码云)：https://gitee.com/heike07code/Backup-tools 
+
+B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?sid=1636805
+
+![image-20230817143936892](README.assets/image-20230817143936892.png)
+
+欢迎大家star ⭐ 谢谢！ thanks~
+
+
 
 ## Ⅱ. 开发任务
 1. _`OK.`_ - 思路建设 
@@ -72,11 +93,13 @@
 6. _`OK.`_ - 使用GO封装
 7. _`OK.`_ - 主程序和配置文件分离
 8. _`OK.`_ - 合并主分支发布Releases
-9. _`ING.`_ - 文档细化
+9. _`OK.`_ - 文档细化
+
+下一版本构思中……
 
 ## Ⅲ. 底层环境构建
 ### 1. 操作系统适用
-适用于Centos7、Redhat7 操作系统，其他系统适配中……
+适用于Centos7、Redhat7 操作系统，支持X86_64 架构，可以运行GO,shell的操作系统，其他系统适配中……
 ### 2. mysql或mariadb数据库
 
 --（因为本机为实验环境没有MySQL则需要安装）
