@@ -587,7 +587,7 @@
       "width": 189.10693726053432,
       "height": 234.48508031486784,
       "angle": 0,
-      "strokeColor": "#2f9e44",
+      "strokeColor": "#1971c2",
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeWidth": 2,
@@ -600,8 +600,8 @@
         "type": 2
       },
       "seed": 924841102,
-      "version": 260,
-      "versionNonce": 1084004878,
+      "version": 261,
+      "versionNonce": 805087186,
       "isDeleted": false,
       "boundElements": [
         {
@@ -609,7 +609,7 @@
           "id": "rgo5crxmF22sUjYQftbG8"
         }
       ],
-      "updated": 1698286940279,
+      "updated": 1698288798712,
       "link": null,
       "locked": false,
       "points": [
@@ -648,7 +648,7 @@
       "width": 124.97988891601562,
       "height": 25,
       "angle": 0,
-      "strokeColor": "#2f9e44",
+      "strokeColor": "#1971c2",
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeWidth": 2,
@@ -659,11 +659,11 @@
       "frameId": null,
       "roundness": null,
       "seed": 1079554322,
-      "version": 26,
-      "versionNonce": 412898770,
+      "version": 27,
+      "versionNonce": 1499461198,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1698286940279,
+      "updated": 1698288798712,
       "link": null,
       "locked": false,
       "text": "Pull Request",
