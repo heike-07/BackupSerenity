@@ -69,7 +69,7 @@
     - [2. 程序编译](#2-程序编译)
 
 
-## Ⅰ. 程序说明
+## Ⅰ. 1.程序说明
 
 **开源软件 BackupSerenity MySQL 数据库备份工具** 
 
@@ -89,7 +89,8 @@ B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?s
 
 欢迎大家star ⭐ 谢谢！ thanks~
 
-
+## Ⅰ. 2. 开发流程说明
+![Development-Branch-Management-Process](Doc/Development-Branch-Management-Process.png)
 
 ## Ⅱ V1.1 开发进度
 
