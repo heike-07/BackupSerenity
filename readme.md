@@ -91,7 +91,7 @@ B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?s
 欢迎大家star ⭐ 谢谢！ thanks~
 
 ## Ⅰ. 2. 开发流程说明
-![Development-Branch-Management-Process](Doc/DevelopmentBranchManagementProcess.png)
+![Development](Doc/Development.png)
 
 ## Ⅱ V1.1 开发进度
 
