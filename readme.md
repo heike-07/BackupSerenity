@@ -127,7 +127,8 @@ B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?s
 
 ### 版本说明
 
-努力开发中……
+1. 新增判断当前环境是否为docker的逻辑和函数
+2. ...
 
 ---
 
