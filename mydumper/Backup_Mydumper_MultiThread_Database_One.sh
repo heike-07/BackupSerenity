@@ -94,10 +94,10 @@ If_Mydumper(){
     # whereis mydumper | wc -l  Y=1  F=0
     mydumper_status=$(whereis mydumper | wc -l)
     if [[ $mydumper_status -eq 0 ]] ;then
-	echo "没有发现mydumper程序,请确认该服务器是否为备份中控."
+	    echo "没有发现mydumper程序,请确认该服务器是否为备份中控."
     	else
-        echo "已发现mydumper程序,该服务器为备份中控服务器,正在执行拉取备份脚本……"
-	If_NFS
+      echo "已发现mydumper程序,该服务器为备份中控服务器,正在执行拉取备份脚本……"
+	    If_Docker
     fi
 }
 
