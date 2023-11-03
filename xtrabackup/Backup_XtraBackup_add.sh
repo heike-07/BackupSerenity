@@ -29,6 +29,39 @@ MYSQL_Default=/etc/my.cnf
 MYSQL_Port=3306
 MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
 
+DOCKER_TYPE="overlay"
+
+If_Docker(){
+    # Principle
+    # IFIST Is Docker
+    # df -h | grep -e overlay | awk '{print $1}'
+    # ll -a / | grep -e .dockerenv | awk '{print $9}'
+    DockerType=$(df -h | grep -e overlay | awk '{print $1}')
+
+    if [[ $DOCKER_TYPE == $DockerType ]] ;then
+       echo "检测到/文件类型为overlay，判断为Docker容器环境"
+       If_FOLDER
+       else
+       echo "没有检测到/文件类型为overlay，当前环境不是Docker容器环境"
+       XtraBackup_If_NFS
+    fi
+
+}
+
+If_FOLDER(){
+   # Principle
+   # IFIST FOLDER NFS_LINK_DISK
+   # ll -a / | grep -e NFS_LINK_DISK | awk '{print $9}'
+   Folder=$(ls -la / | grep -e NFS_LINK_DISK | awk '{print $9}')
+
+   if [[ $MYSQL_Nfs_DiskDir == $Folder ]] ;then
+      echo "发现文件夹 $Folder，正在继续执行脚本……"
+      XtraBackup_If
+      else
+      echo "没有发现文件夹 $MYSQL_Nfs_DiskDir，请检查环境是否创建文件夹/$MYSQL_Nfs_DiskDir"
+   fi
+}
+
 # Function
 XtraBackup_Full(){
     # Principle
@@ -110,7 +143,7 @@ Mysql_binlog_If(){
     if [[ mysql_binlog_num -ge 1 ]] && [[ mysql_serverid_num -ge 1 ]] ;then
 	#echo $mysql_binlog_num $mysql_serverid_num
 	echo "已发现mysqlbinlog相关配置，正在继续执行脚本……"
-	XtraBackup_If_NFS
+	If_Docker
     	else
 	echo "脚本启动失败"
         echo "配置文件$MYSQL_Default，中没有binlog相关配置，请先修改相关配置并重启数据库再次尝试。"

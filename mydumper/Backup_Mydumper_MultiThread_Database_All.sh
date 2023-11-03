@@ -15,7 +15,7 @@
 ## Default_config
 NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
-Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
+#Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
 Script_Dir=/root/IdeaProjects/Backup-tools/mydumper
 Script_Log=Backup_Mydumper_MultiThread_Database_All.log
 Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mydumper_MultiThread_Databases_All
@@ -37,6 +37,39 @@ DUMPER_INFO_LAVEL=3
 DUMPER_THREADS_NUMBER=32
 # dumper信息展示存储日志位置
 DUMPER_BACKINFO_LOG=${Script_Dir}/DUMPER_Backup_info.log
+
+DOCKER_TYPE="overlay"
+
+If_Docker(){
+    # Principle
+    # IFIST Is Docker
+    # df -h | grep -e overlay | awk '{print $1}'
+    # ll -a / | grep -e .dockerenv | awk '{print $9}'
+    DockerType=$(df -h | grep -e overlay | awk '{print $1}')
+
+    if [[ $DOCKER_TYPE == $DockerType ]] ;then
+       echo "检测到/文件类型为overlay，判断为Docker容器环境"
+       If_FOLDER
+       else
+       echo "没有检测到/文件类型为overlay，当前环境不是Docker容器环境"
+       If_NFS
+    fi
+
+}
+
+If_FOLDER(){
+   # Principle
+   # IFIST FOLDER NFS_LINK_DISK
+   # ll -a / | grep -e NFS_LINK_DISK | awk '{print $9}'
+   Folder=$(ls -la / | grep -e NFS_LINK_DISK | awk '{print $9}')
+
+   if [[ $MYSQL_Nfs_DiskDir == $Folder ]] ;then
+      echo "发现文件夹 $Folder，正在继续执行脚本……"
+      If_Save_Url
+      else
+      echo "没有发现文件夹 $MYSQL_Nfs_DiskDir，请检查环境是否创建文件夹/$MYSQL_Nfs_DiskDir"
+   fi
+}
 
 If_NFS(){
     # Principle
@@ -61,10 +94,10 @@ If_Mydumper(){
     # whereis mydumper | wc -l  Y=1  F=0
     mydumper_status=$(whereis mydumper | wc -l)
     if [[ $mydumper_status -eq 0 ]] ;then
-	echo "没有发现mydumper程序,请确认该服务器是否为备份中控."
+	    echo "没有发现mydumper程序,请确认该服务器是否为备份中控."
     	else
-        echo "已发现mydumper程序,该服务器为备份中控服务器,正在执行拉取备份脚本……"
-	If_NFS
+      echo "已发现mydumper程序,该服务器为备份中控服务器,正在执行拉取备份脚本……"
+	    If_Docker
     fi
 }
 
