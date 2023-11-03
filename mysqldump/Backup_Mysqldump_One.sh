@@ -16,7 +16,7 @@
 NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
 #Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/root/IdeaProjects/Backup-tools/mysqldump
+Script_Dir=/Backup-tools/mysqldump
 Script_Log=Backup_Mysqldump_One.log
 Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mysqldump_Save
 

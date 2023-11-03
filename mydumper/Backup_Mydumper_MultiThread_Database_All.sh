@@ -16,7 +16,7 @@
 NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
 #Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/root/IdeaProjects/Backup-tools/mydumper
+Script_Dir=/Backup-tools/mydumper
 Script_Log=Backup_Mydumper_MultiThread_Database_All.log
 Data_Storage_Save=/NFS_LINK_DISK/127.0.0.1/Mydumper_MultiThread_Databases_All
 

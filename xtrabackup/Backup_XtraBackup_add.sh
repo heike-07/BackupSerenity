@@ -16,8 +16,8 @@
 ## Default_config
 NetworkSegment=127.0.0.1
 Date=$(date +%Y%m%d-%H%M%S)
-Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
-Script_Dir=/root/IdeaProjects/Backup-tools/xtrabackup
+#Base_IP=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' | grep ${NetworkSegment})
+Script_Dir=/Backup-tools/xtrabackup
 Script_Log=Backup_XtraBackup_Add.log
 Data_Storage_Full=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Full
 Data_Storage_Add=/NFS_LINK_DISK/127.0.0.1/XtraBackup/Add
