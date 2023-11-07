@@ -114,21 +114,24 @@ B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?s
 ## Ⅱ V2.0 开发进度
 
 ### 开发任务
-1. _`ING.`_ - 思路建设
-2. _`ING.`_ - 编写readme-doc文档
-3. _`ING.`_ - docker images 镜像封装
-4. _`ING.`_ - 研究dokcer run 启动方式
-5. _`ING.`_ - 研究dokcer 变量参数调用、以及文件映射
-6. _`ING.`_ - 研究dockercompose 启动方式
-7. _`ING.`_ - 封装镜像 发布至docker hub
-8. _`ING.`_ - Write quick-use documentation
-9. _`ING.`_ - 测试
-10. _`ING.`_ - 打tag version 发布 releases
+1. _`OK.`_ - 思路建设
+2. _`OK.`_ - 编写readme-doc文档
+3. _`OK.`_ - docker images 镜像封装
+4. _`OK.`_ - 研究dokcer run 启动方式
+5. _`OK.`_ - 研究dokcer 变量参数调用、以及文件映射
+6. _`OK.`_ - 封装镜像 发布至docker hub 并编写overview
+7. _`OK.`_ - Write Quick Start documentation
+8. _`OK.`_ - 测试
+9. _`OK.`_ - 打tag version 发布 releases
 
 ### 版本说明
 
 1. 新增判断当前环境是否为docker的逻辑和函数
-2. ...
+2. 新增backupserenity 控制主程序
+3. 去除容器内crontab 定期任务逻辑
+4. 修复docker exec 无法调度 提示exit 1的问题
+5. 解决systemd 无法在容器中执行
+6. 实现docker容器化封装，运行
 
 ---
 
@@ -816,10 +819,13 @@ MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
 #### 1/2 程序启动
 
 ```shell
+# 脚本方式
 [root@localhost mysqldump]# cd /root/IdeaProjects/Backup-tools/mysqldump
 [root@localhost mysqldump]# chmod +x Backup_Mysqldump_All.sh
 [root@localhost mysqldump]# ./Backup_Mysqldump_All.sh 
 mysqldump: [Warning] Using a password on the command line interface can be insecure.
+# Go编译后方式
+[root@localhost Backupserenity-EDR]# /Backup-tools/backupserenity Backup_Mysqldump_All
 ```
 
 #### 1/3 查看结果
@@ -897,10 +903,13 @@ MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
 #### 2/2 程序启动
 
 ```shell
+# 脚本方式
 [root@localhost mysqldump]# chmod +x Backup_Mysqldump_One.sh
 [root@localhost mysqldump]# ./Backup_Mysqldump_One.sh 
 mysqldump: [Warning] Using a password on the command line interface can be insecure.
 [root@localhost mysqldump]# 
+# Go编译后方式
+[root@localhost Backupserenity-EDR]# /Backup-tools/backupserenity Backup_Mysqldump_One
 ```
 
 #### 2/3 查看结果
@@ -1013,6 +1022,7 @@ DUMPER_BACKINFO_LOG=${Script_Dir}/DUMPER_Backup_info.log
 #### 3/2 程序启动
 
 ```shell
+# 脚本方式
 [root@localhost mydumper]# chmod +x Backup_Mydumper_MultiThread_Database_All.sh 
 [root@localhost mydumper]# ./Backup_Mydumper_MultiThread_Database_All.sh 
 [root@localhost mydumper]# tail DUMPER_Backup_info.log 
@@ -1022,6 +1032,8 @@ DUMPER_BACKINFO_LOG=${Script_Dir}/DUMPER_Backup_info.log
 ** Message: 14:10:34.024: Thread 5 shutting down
 ** Message: 14:10:34.025: Thread 1 shutting down
 ** Message: 14:10:34.032: Finished dump at: 2023-07-07 14:10:34
+# Go编译后方式
+[root@localhost Backupserenity-EDR]# /Backup-tools/backupserenity Backup_Mydumper_MultiThread_Database_All
 ```
 
 #### 3/3 查看结果
@@ -1065,8 +1077,11 @@ MYSQL_Database_Name=sakila_b
 #### 4/2 程序启动
 
 ```shell
+# 脚本方式
 [root@localhost mydumper]# chmod +x Backup_Mydumper_MultiThread_Database_One.sh 
 [root@localhost mydumper]# ./Backup_Mydumper_MultiThread_Database_One.sh 
+# Go编译后方式
+[root@localhost Backupserenity-EDR]# /Backup-tools/backupserenity Backup_Mydumper_MultiThread_Dtabase_One 
 ```
 
 #### 4/3 查看结果
@@ -1135,6 +1150,7 @@ MYSQL_Nfs_DiskDir="NFS_LINK_DISK"
 #### 5/2 程序启动
 
 ```shell
+# 脚本方式
 [root@localhost xtrabackup]# chmod +x Backup_XtraBackup_add.sh 
 [root@localhost xtrabackup]# ll
 total 8
@@ -1168,6 +1184,8 @@ START 20230710-134256
 正在判断是否有FULL指针，请稍后……
 没有找到全量备份FULL的指针，正在执行全量备份FULL
 END 20230710-134256
+# Go编译后方式
+[root@localhost Backupserenity-EDR]# /Backup-tools/backupserenity Backup_XtraBackup_add
 ```
 
 #### 5/3 制作增量数据
@@ -1280,6 +1298,7 @@ DELIMITER ;
 
 ```shell
 # 执行第二次启动并触发增量函数
+# 脚本方式
 [root@localhost xtrabackup]# ./Backup_XtraBackup_add.sh 
 ...
 xtrabackup: The latest check point (for incremental): '2772290'
@@ -1311,6 +1330,8 @@ START 20230710-142137
 首次增量备份已完成
 END 20230710-142137
 [root@localhost xtrabackup]# 
+# Go编译后方式
+[root@localhost Backupserenity-EDR]# /Backup-tools/backupserenity Backup_XtraBackup_add
 ```
 
 #### 5/5 查看结果
