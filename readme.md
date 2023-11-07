@@ -77,6 +77,36 @@
 
 核心原理：通过 go 封装的一套基于 MySQL 备份的思路工具……
 
+通过 go 封装的一套基于 MySQL 备份的思路工具，可以实现以下内容：
+
+1.Backup_Mysqldump_All
+
+该程序为 mysqldump 原生的全库数据库备份程序。
+
+2.Backup_Mysqldump_One
+
+该程序为 mysqldump 原生的单个数据库备份程序。
+
+3.Backup_Mydumper_MultiThread_Database_All
+
+该程序为多线程全量数据库备份程序
+
+4.Backup_Mydumper_MultiThread_Database_One
+
+该程序为多线程单库全量数据库备份程序
+
+5.Backup_XtraBackup_add
+
+该程序为 XtraBackup 增量备份程序，用于提供 MySQL 数据库的全量 + 增量备份程序
+
+**适用于不同的 MYSQL 备份场景**
+
+**全量备份、增量备份、单库备份、多库备份、全库备份、binlog 备份、文件备份**
+
+**应该差不多能覆盖所有的 MySQL 备份需求了吧。**
+
+欢迎大家 star ⭐ 谢谢！ thanks~
+
 作者： heike07 
 
 开源中国收录软件链接：https://www.oschina.net/p/backupserenity 
@@ -88,8 +118,6 @@ Gitee(码云)：https://gitee.com/heike07code/Backup-tools
 B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?sid=1636805
 
 ![image-20230817145834992](README.assets/image-20230817145834992.png)
-
-欢迎大家star ⭐ 谢谢！ thanks~
 
 ## Ⅰ. 2. 开发流程说明
 ![Development](Doc/Development.png)
