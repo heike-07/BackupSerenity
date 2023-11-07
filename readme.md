@@ -69,8 +69,9 @@
     - [1. 构建开发环境](#1-构建开发环境)
     - [2. 程序编译](#2-程序编译)
 
-
 ## Ⅰ. 1.程序说明
+
+快速开始QuickStart：[https://github.com/heike-07/Backup-tools/blob/main/Doc/QuickStart.md](https://github.com/heike-07/Backup-tools/blob/main/Doc/QuickStart.md)
 
 **开源软件 BackupSerenity MySQL 数据库备份工具** 
 
