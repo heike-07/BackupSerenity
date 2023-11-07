@@ -1,0 +1,21 @@
+#!/bin/bash
+# Author: Heike07
+
+# 进入容器程序定义文件夹，如果不写，则会在外置容器执行报错
+cd /Backup-tools
+
+# 检查是否提供了程序名称作为参数
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <program_name>"
+  exit 1
+fi
+
+program_name="$1"
+
+# 检查程序是否存在并是可执行的
+if [ -x "$program_name" ]; then
+  ./"$program_name"
+else
+  echo "Program not found or not executable: $program_name"
+  exit 1
+fi
