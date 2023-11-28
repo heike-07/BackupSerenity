@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  ### Server
+  backupserenity-nginx:
+    image: heike07/backupserenity-nginx:2.1
+    restart: always
+    container_name: backupserenity-nginx
+    ports:
+      # 外置端口根据需求设置 默认8000
+      - 8000:80
+    networks:
+      - backupserenity-Network
+    volumes:
+      - ./NFS_LINK_DISK:/NFS_LINK_DISK:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # 默认admin BackupSerenity123 ,正式环境需要用htpasswd重新生成
+      - ./htpasswd:/etc/nginx/htpasswd:ro
+
+  ### Application
+  backupserenity:
+    image: heike07/backupserenity:2.0
+    restart: always
+    container_name: backupserenity
+    privileged: true
+    tty: true
+    command: /usr/sbin/init
+    ports:
+      - 3336:3306
+    networks:
+      - backupserenity-Network
+    volumes:
+      - ./conf:/Backup-tools/conf:rw
+      - ./NFS_LINK_DISK:/NFS_LINK_DISK:rw
+
+### Netowrk
+networks:
+  backupserenity-Network:
+    driver: bridge
+    name: backupserenity-Network
