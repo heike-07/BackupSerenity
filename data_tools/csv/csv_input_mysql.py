@@ -44,7 +44,7 @@ for filename in os.listdir(csv_dir):
         create_table_query = "CREATE TABLE IF NOT EXISTS `{}` (".format(table_name)
         for header in headers:
             create_table_query += "`" + header.replace('"', '') + "` TEXT, "
-        create_table_query = create_table_query.rstrip(', ') + ");"
+        create_table_query = create_table_query.rstrip(', ') + ") CHARSET=utf8;"
 
 
         try:
