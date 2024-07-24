@@ -6,6 +6,7 @@
 import os
 import csv
 import pymysql
+import re
 
 # MySQL 配置
 db_config = {
@@ -43,7 +44,9 @@ for filename in os.listdir(csv_dir):
         table_name = os.path.splitext(filename)[0].replace('.', '-')
         create_table_query = "CREATE TABLE IF NOT EXISTS `{}` (".format(table_name)
         for header in headers:
-            create_table_query += "`" + header.replace('"', '') + "` TEXT, "
+            # 去除列名中的双引号和其他不必要的特殊字符，包括不可见字符
+            clean_header = re.sub(r'[^\w]', '', header.strip())
+            create_table_query += "`" + clean_header + "` TEXT, "
         create_table_query = create_table_query.rstrip(', ') + ") CHARSET=utf8mb4;"
 
 
@@ -64,6 +67,8 @@ for filename in os.listdir(csv_dir):
             CHARACTER SET utf8mb4
             FIELDS TERMINATED BY ','
             OPTIONALLY ENCLOSED BY '"'
+            ESCAPED BY '\\\\'
+            LINES TERMINATED BY '\n'
             IGNORE 1 LINES;
             """
             cursor.execute(load_data_query)
