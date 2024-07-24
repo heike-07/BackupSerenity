@@ -44,7 +44,7 @@ for filename in os.listdir(csv_dir):
         create_table_query = "CREATE TABLE IF NOT EXISTS `{}` (".format(table_name)
         for header in headers:
             create_table_query += "`" + header.replace('"', '') + "` TEXT, "
-        create_table_query = create_table_query.rstrip(', ') + ") CHARSET=utf8;"
+        create_table_query = create_table_query.rstrip(', ') + ") CHARSET=utf8mb4;"
 
 
         try:
@@ -61,7 +61,7 @@ for filename in os.listdir(csv_dir):
             load_data_query = f"""
             LOAD DATA LOCAL INFILE '{file_path}'
             INTO TABLE `{table_name}`
-            CHARACTER SET utf8
+            CHARACTER SET utf8mb4
             FIELDS TERMINATED BY ','
             OPTIONALLY ENCLOSED BY '"'
             IGNORE 1 LINES;
@@ -69,6 +69,14 @@ for filename in os.listdir(csv_dir):
             cursor.execute(load_data_query)
             connection.commit()
             print(f"{file_path} 数据导入成功")
+
+            # 显示导入警告
+            cursor.execute("SHOW WARNINGS")
+            warnings = cursor.fetchall()
+            if warnings:
+                print(f"{file_path} 数据导入警告:")
+                for warning in warnings:
+                    print(warning)
         except Exception as load_error:
             print(f"{file_path} 数据导入失败: {load_error}")
             connection.rollback()
