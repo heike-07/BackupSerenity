@@ -72,7 +72,7 @@ UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb4 in position 0: invalid 
 源数据无法预估质量，会出现源数据换行等情况，此时可以使用清洗工具进行清洗，清洗后即可进行验证
 ### 如何验证？
 ```shell
-通过数据导入程序进行导入程序后，对原始csv进行清洗
+通过数据导入程序进行导入程序后，对原始csv进行单个文件清洗
 编辑 cleaned_data.py 文件修改
 
 # 清洗前源数据
@@ -93,3 +93,32 @@ SELECT COUNT(1) FROM you_file
 
 数据验证成功！
 ```
+
+## 批量数据验证
+源数据无法预估质量，会出现源数据换行等情况，此时可以使用批量清洗工具进行清洗，清洗后即可进行验证
+### 如何批量验证？
+```shell
+通过数据导入程序进行导入程序后，对原始csv进行批量文件清洗
+将原始文件 放入input文件夹{没有创建一下}
+
+执行批量清洗程序
+python3 cleaned_datas.py
+
+执行后可以通过输出结果查询结果：
+
+[root@ict181 db_cls]# python3 differ_datas_v3.py 
+cleaned_xxl_job.xxl_job_1.csv: MySQL 行数 = 27, 清洗后行数 = 28, 数据校验 = 校验通过
+cleaned_xxl_job.xxl_job_2.csv: MySQL 行数 = 621, 清洗后行数 = 622, 数据校验 = 校验通
+cleaned_xxl_job.xxl_job_3.csv: MySQL 行数 = 1, 清洗后行数 = 2, 数据校验 = 校验通过
+cleaned_xxl_job.xxl_job_4.csv: MySQL 行数 = 0, 清洗后行数 = 1, 数据校验 = 校验通过
+cleaned_xxl_job.xxl_job_5.csv: MySQL 行数 = 73, 清洗后行数 = 74, 数据校验 = 校验通过
+cleaned_xxl_job.xxl_job_6.csv: MySQL 行数 = 0, 清洗后行数 = 1, 数据校验 = 校验通过
+cleaned_xxl_job.xxl_job_log.csv: MySQL 行数 = 74513, 清洗后行数 = 74514, 数据校验 = 校验通过
+cleaned_xxl_job.xxl_job_info.csv: MySQL 行数 = 92, 清洗后行数 = 93, 数据校验 = 校验通过
+所有文件的行数对比和数据校验工作已完成。
+
+通过nohup进行后台执行参考前面执行方式
+通过 | grep 进行日志筛选
+```
+
+祝您 工作顺利！
