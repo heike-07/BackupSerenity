@@ -117,6 +117,5 @@ if __name__ == "__main__":
         'local_infile': True,
     }
 
-
     main()
 

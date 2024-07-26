@@ -1,3 +1,7 @@
+# TITLE: csv_input_mysql
+# Author: GPT4 & heike07
+
+# 脚本工具作用：用于csv批量导入mysql
 import os
 import csv
 import pymysql
