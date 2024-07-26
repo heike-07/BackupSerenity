@@ -1,61 +1,47 @@
-# csv_input_mysql
+# CSV 工具集操作文档
 Author: GPT4.0 & heike07
 > 将包含表头的CSV文件批量导入至MYSQL
-## Run
-启动脚本 - 初始手动定义字符集版
+
+## 文件结构
 ```shell
-nohup python3 csv_input_mysql.py > csv_input_mysql.log &
+|- csv_input_mysql_chardet.py 数据导入工具
+|- csv_input_mysql_debug.py 数据导入工具debug
+|- cleaned_data.py 数据清洗单文件工具
+|- cleaned_datas.py 数据批量文件清洗工具
+|- differ_datas.py 数据批量比对工具
+```
+
+## 数据导入工具
+csv_input_mysql_chardet.py
+### 运行启动
+启动脚本
+```shell
+直接执行：
+python3 csv_input_data_chardet.py
+
+或通过日志生成
+nohup python3 csv_input_data_chardet.py > csv_input_mysql.log &
+
 生成的文件名称 csv_input_mysql.log 可以根据情况修改，如果想保留全部日志可以将 > 替换为 >> 即可
 ```
-
-## Log see
-查看日志 - 初始手动定义字符集版
-```shell
-vim csv_input_mysql.log
-```
-查看日志 - 字符集自动判断版
+查看日志
 ```shell
 vim csv_input_mysql.log
 ```
 
-## Log err output -ERR
-导出错误日志 [失败]
-```shell
-cat csv_input_mysql.log | grep '创建失败' > csv_input_mysql.log.ERR
-```
-## Log err see -ERR
-查看错误日志 [失败]
-```shell
-vim csv_input_mysql.log.ERR
-```
-## Get csv files name -OK
-获取全部CSV文件名称 [成功]
-```shell
-cat csv_input_mysql.log | grep '正在疯狂处理' | awk '{print $2}' > csv_files.list
-```
-## Get tables name -OK
-获取全部表名称 [成功]
-```shell
-cat csv_input_mysql.log | grep '创建成功' | awk '{print $2}' > table_names.list
-```
-
-## Debug
-调试
-
-### Table_replace
+### 调试DEBUG
 字符串替换
 ```shell
 table_name = os.path.splitext(filename)[0].replace('.', '-')
 根据实际情况替换CSV文件中分隔符
 ```
-
-### Field_type
+Field_type
 ```shell
 create_table_query += "`" + header.replace('"', '') + "` TEXT, "
 根据实际情况调整字段类型
 ```
 
-### ERR
+## ERR
 常见错误
 ```shell
 数据表格 `XXX` 创建失败: (1059, "Identifier name 'XXX' is too long")
