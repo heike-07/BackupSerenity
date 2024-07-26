@@ -2,16 +2,27 @@
 Author: GPT4.0 & heike07
 > 将包含表头的CSV文件批量导入至MYSQL
 ## Run
-启动脚本
+启动脚本 - 初始手动定义字符集版
 ```shell
 nohup python3 csv_input_mysql.py > csv_input_mysql.log &
 生成的文件名称 csv_input_mysql.log 可以根据情况修改，如果想保留全部日志可以将 > 替换为 >> 即可
 ```
+启动脚本 - 字符集自动判断版
+```shell
+nohup python3 csv_input_mysql_chardet.py > csv_input_mysql_chardet.log &
+生成的文件名称 csv_input_mysql_chardet.log 可以根据情况修改，如果想保留全部日志可以将 > 替换为 >> 即可
+```
+
 ## Log see
-查看日志
+查看日志 - 初始手动定义字符集版
 ```shell
 vim csv_input_mysql.log
 ```
+查看日志 - 字符集自动判断版
+```shell
+vim csv_input_mysql.log
+```
+
 ## Log err output -ERR
 导出错误日志 [失败]
 ```shell
@@ -76,6 +87,16 @@ UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb4 in position 0: invalid 
 修改 csv_input_mysql.py 中的
 源数据为LINUX导出CSV换行修改为： LINES TERMINATED BY '\n'
 源数据为WINDOES导出CSV换行修改为： LINES TERMINATED BY '\r\n'
+```
+依赖缺失错误
+```shell
+执行带字符编码检测的程序csv_input_data_chardet.py时提示
+Traceback (most recent call last):
+  File "csv_input_data_chardet.py", line 5, in <module>
+    import chardet
+ModuleNotFoundError: No module named 'chardet'
+解决方法
+pip3 install chardet
 ```
 
 ## 数据验证
