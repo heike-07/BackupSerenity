@@ -67,6 +67,16 @@ create_table_query += "`" + header.replace('"', '') + "` TEXT, "
 UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb4 in position 0: invalid start byte
 初始文件中有中文，或者编码非utf8 ，此时需要修改代码中 uft8 替换为自己的编码 比如gbk、gb2312 等
 ```
+数据源（windows&linux）
+用于CSV生成的操作系统不同的换行符是不一样的。
+```shell
+导入过程中出现大类警告
+'Warning', 1262, 'Row 64 was truncated; it contained more data than there were input columns'
+
+修改 csv_input_mysql.py 中的
+源数据为LINUX导出CSV换行修改为： LINES TERMINATED BY '\n'
+源数据为WINDOES导出CSV换行修改为： LINES TERMINATED BY '\r\n'
+```
 
 ## 数据验证
 源数据无法预估质量，会出现源数据换行等情况，此时可以使用清洗工具进行清洗，清洗后即可进行验证
