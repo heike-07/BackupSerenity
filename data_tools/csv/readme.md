@@ -4,7 +4,7 @@ Author: GPT4.0 & heike07
 
 ## 文件结构
 ```shell
-|- csv_input_mysql_chardet.py 数据导入工具
+|- csv_input_mysql.py 数据导入工具
 |- csv_input_mysql_debug.py 数据导入工具debug
 |- cleaned_data.py 数据清洗单文件工具
 |- cleaned_datas.py 数据批量文件清洗工具
@@ -12,15 +12,15 @@ Author: GPT4.0 & heike07
 ```
 
 ## 数据导入工具
-csv_input_mysql_chardet.py
+csv_input_mysql.py
 ### 运行启动
 启动脚本
 ```shell
 直接执行：
-python3 csv_input_data_chardet.py
+python3 csv_input_mysql.py
 
 或通过日志生成
-nohup python3 csv_input_data_chardet.py > csv_input_mysql.log &
+nohup python3 csv_input_mysql.py > csv_input_mysql.log &
 
 生成的文件名称 csv_input_mysql.log 可以根据情况修改，如果想保留全部日志可以将 > 替换为 >> 即可
 ```
