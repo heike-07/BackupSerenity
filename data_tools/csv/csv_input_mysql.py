@@ -1,3 +1,8 @@
+# TITLE: csv_input_mysql
+# Author: GPT4 & heike07
+
+# 脚本工具作用： 将包含表头的CSV文件批量导入至MYSQL
+
 import os
 import csv
 import pymysql

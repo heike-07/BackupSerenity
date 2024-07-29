@@ -1,4 +1,4 @@
-# TITLE: xls_input_mysql
+# TITLE: xls_differ_mysql
 # Author: GPT4 & heike07
 
 # 脚本工具作用：用于xls批量比对mysql
@@ -36,7 +36,7 @@ def get_row_count_from_mysql(host, port, user, password, database, table):
         connection.close()
 
 def main():
-    parser = argparse.ArgumentParser(description='校验 Excel 数据与 MySQL 数据库中记录数是否一致')
+    parser = argparse.ArgumentParser(description='批量校验 Excel 数据与 MySQL 数据库中记录数是否一致')
     parser.add_argument('directory', type=str, help='包含 Excel 文件的目录')
     args = parser.parse_args()
 
