@@ -85,5 +85,14 @@ Traceback (most recent call last):
     raise exc
 pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on '192.168.1.15' ([Errno 111] Connection refused)")
 解决方法
-检查数据库联系信息并修改db_config函数参数
+检查数据库联系信息并修改xls_differ_mysql.py中的db_config函数参数 ↓
+
+    # 数据库连接信息
+    db_config = {
+        'user': 'you is user',
+        'password': 'you is password',
+        'host': 'you is IP',
+        'port': 3306,
+        'database': 'you is database name',
+    }
 ```
