@@ -88,7 +88,7 @@ def process_excel_file(file_path, batch_size, field_type):
         print(f"读取 Excel 文件失败: {e}")
 
 def main():
-    parser = argparse.ArgumentParser(description='将 Excel 数据导入 MySQL 数据库')
+    parser = argparse.ArgumentParser(description='批量将 Excel 数据导入 MySQL 数据库')
     parser.add_argument('directory', type=str, help='包含 Excel 文件的目录')
     parser.add_argument('--batch_size', type=int, default=500, help='数据批量插入大小')
     parser.add_argument('--field_type', type=str, default='VARCHAR(500)', help='数据库字段类型')

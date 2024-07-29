@@ -4,9 +4,7 @@ Author: GPT4.0 & heike07
 
 ## 文件结构
 ```shell
-|- csv_input_mysql.py 数据导入工具
-|- csv_input_mysql_debug.py 数据导入工具debug
-|- cleaned_data.py 数据清洗单文件工具
+|- csv_input_mysql.py 数据批量导入工具
 |- cleaned_datas.py 数据批量文件清洗工具
 |- differ_datas.py 数据批量比对工具
 ```
@@ -78,32 +76,6 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'chardet'
 解决方法
 pip3 install chardet
-```
-
-## 数据验证
-源数据无法预估质量，会出现源数据换行等情况，此时可以使用清洗工具进行清洗，清洗后即可进行验证
-### 如何验证？
-```shell
-通过数据导入程序进行导入程序后，对原始csv进行单个文件清洗
-编辑 cleaned_data.py 文件修改
-
-# 清洗前源数据
-input_file = 'you_file.csv'
-# 清洗后数据
-output_file = 'cleaned_you_file.csv'
-
-修改完成后进行执行
-python3 cleaned_data.py
-
-执行成功后通过wc命令进行行数获取
-wc -l cleaned_you_file.csv
-
-数据库通过
-SELECT COUNT(1) FROM you_file
-
-得出的数差值为1
-
-数据验证成功！
 ```
 
 ## 批量数据验证

@@ -1,4 +1,4 @@
-# TITLE: csv_input_mysql
+# TITLE: cleaned_datas
 # Author: GPT4 & heike07
 
 # 脚本工具作用：批量清洗""字段中的换行情况以及空格，使其变为已（行）为单位的标准CSV

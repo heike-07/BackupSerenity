@@ -1,3 +1,7 @@
+# TITLE: differ_datas
+# Author: GPT4 & heike07
+
+# 脚本工具作用： 对清洗后的数据校验的批量对比工具
 import os
 import csv
 import pymysql
