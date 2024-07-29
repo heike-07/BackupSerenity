@@ -2,6 +2,12 @@
 Author: GPT4.0 & heike07
 > 将包含表头的XLS和XLSX文件批量导入至MYSQL
 
+## 文件结构
+```shell
+|- xls_input_mysql.py xls数据批量导入工具
+|- xls_differ_mysql.py xls数据批量校验工具
+```
+
 ## 启动运行
 ```shell
 # python3 xls_input_mysql.py
