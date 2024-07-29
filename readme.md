@@ -130,7 +130,7 @@ B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?s
 
 
 ### 版本说明
-
+跳转更新内容：[https://github.com/heike-07/Backup-tools/blob/main/Doc/QuickStart.md]
 1. wip - 🕔 新增：CSV文件批量导入工具集
 2. wip - 🕔 新增：XLSX文件批量导入工具集
 ---
