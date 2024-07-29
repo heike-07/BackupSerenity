@@ -122,3 +122,15 @@ B站视频讲解：https://space.bilibili.com/7152549/channel/collectiondetail?s
 5. 新增备份结果通过nginx加密查看下载
 ---
 
+## Ⅲ V2.2 开发进度
+
+### 开发任务
+
+1. _`OK.`_ - 解决批量导入数据问题
+
+
+### 版本说明
+
+1. wip - 🕔 新增：CSV文件批量导入工具集
+2. wip - 🕔 新增：XLSX文件批量导入工具集
+---
