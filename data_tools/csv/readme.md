@@ -105,4 +105,18 @@ cleaned_xxl_job.xxl_job_info.csv: MySQL 行数 = 92, 清洗后行数 = 93, 数�
 通过 | grep 进行日志筛选
 ```
 
+### ID字段新增
+```shell
+导入数据后新增ID字段
+
+执行程序
+# python3 IdAddInputCsvMysql.py 
+请提供 CSV 文件夹的路径作为参数
+# python3 IdAddInputCsvMysql.py ./db
+`id` 字段已成功添加到 `test_win` 表中
+`id` 字段已成功添加到 `test` 表中
+所有表的处理已完成。
+
+```
+
 祝您 工作顺利！

@@ -42,6 +42,19 @@ sheet1 - 数据条数不一致。
 文件: 改-youfile.xlsx | Sheet 页: sheet1 | XLS 数据条数: 327 | MySQL 表: 改-youfile | MySQL 数据条数: 327
 sheet1 - 数据条数一致。
 ```
+## ID字段新增
+```shell
+导入数据后新增ID字段
+
+执行程序
+[root@ict181 tml]# python3 IdAddInputXlsMysql.py ./xls_db/
+`id` 字段已成功添加到 `test1` 表中
+`test2` 表中已存在 `id` 字段，无需添加
+`test3` 表中已存在 `id` 字段，无需添加
+[root@ict181 tml]# 
+
+```
+
 ## ERR
 依赖错误
 ```shell
