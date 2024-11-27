@@ -2,7 +2,7 @@
 
 ## Ⅰ. 1. 程序说明
 
-快速开始 QuickStart：[https://github.com/heike-07/Backup-tools/blob/main/Doc/QuickStart.md](https://github.com/heike-07/Backup-tools/blob/main/Doc/QuickStart.md)
+快速开始 QuickStart：[https://github.com/heike-07/Backup-tools/blob/main/QuickStart.md](https://github.com/heike-07/Backup-tools/blob/main/QuickStart.md)
 
 ![Doc/introduce.png](Doc/introduce.png)
 
