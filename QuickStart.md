@@ -1,5 +1,5 @@
 # Quick start 快速开始
-![introduce.png](introduce.png)
+![Doc/introduce.png](Doc/introduce.png)
 > 开源软件 BackupSerenity MySQL 数据库备份工具 <br/>
 核心原理：通过 go 封装的一套基于 MySQL 备份的思路工具…… <br/>
 作者： heike07
@@ -156,15 +156,15 @@ Usage: /Backup-tools/backupserenity <program_name>
 在V2.1 以后的版本已经支持Nginx结果查看通过访问对应路径http://<your_host>:8000/NFS/ 即可查看
 考虑安全问题，设置了basic的密码，可根据需求修改htpasswd文件修改自己的密码 默认密码为 admin BackupSerenity123
 ```
-![passwd.png](passwd.png)
-![nginx.png](nginx.png)
+![Doc/passwd.png](Doc/passwd.png)
+![Doc/nginx.png](Doc/nginx.png)
 
-## 2. Bin method（二进制方式）
+## 2. Bin 方法（二进制方式）
 
-Refer to the readme.md document (III., IV.) section
-请参阅Doc/Building-the-underlying-environment.md文档（III、IV）部分
+请参阅 [Doc/Building-the-underlying-environment.md](Doc/Building-the-underlying-environment.md#2-bin-方法（二进制方式）) 文档中的（[Ⅲ. 底层环境构建](Doc/Building-the-underlying-environment.md#ⅲ-底层环境构建)
+、[Ⅳ. 程序运行](Doc/Building-the-underlying-environment.md#ⅳ-程序运行)）部分，了解如何使用二进制方式进行部署。
 
-## 3. Development mode（开发方式）
+## 3. 开发模式（Development Mode）
 
-Refer to the readme.md document ( Ⅴ.) section
-请参阅Doc/Building-the-underlying-environment.md文档（Ⅴ.）部分
+请参阅 [Doc/Building-the-underlying-environment.md](Doc/Building-the-underlying-environment.md#) 文档中的（[Ⅴ. 开发](Doc/Building-the-underlying-environment.md#ⅴ-开发)）部分，了解如何在开发模式下构建和使用。
+
